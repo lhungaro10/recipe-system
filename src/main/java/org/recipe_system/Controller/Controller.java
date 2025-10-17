@@ -23,14 +23,15 @@ public class Controller {
 
 
     public Boolean registerIngredient(String name, int qtd_in_stock) {
+        if(this.validateIngredientNameIsEmpty(name)){
+            return false;
+        }
         List<Ingredient> ingredients = this.ingredientCatalog.getIngredients();
         Ingredient ingredient = new Ingredient(name, qtd_in_stock);
 
         Integer numberInStock = this.validateNumberInStock(ingredient);
 
-        if (numberInStock == 0) {
-            return this.ingredientCatalog.insertIngredient(ingredient);
-        } else {
+        if (numberInStock > 0) {
             ingredient.setQtd_in_stock(numberInStock + qtd_in_stock);
         }
 
@@ -38,6 +39,9 @@ public class Controller {
     }
 
     public Boolean editIngredient(Ingredient ingredient, String name, int qtd_in_stock) {
+        if(this.validateIngredientNameIsEmpty(name)){
+            return false;
+        }
         List<Ingredient> ingredients = this.ingredientCatalog.getIngredients();
 
         Integer numberInStock = this.validateNumberInStock(new Ingredient(name, qtd_in_stock));
@@ -55,6 +59,10 @@ public class Controller {
 
     private Integer validateNumberInStock(Ingredient ingredient) {
         return this.ingredientCatalog.getQtdInStock(ingredient);
+    }
+
+    private Boolean validateIngredientNameIsEmpty(String name){
+        return name.isEmpty();
     }
 
 }

@@ -69,8 +69,10 @@ public class Home extends JFrame {
         JMenuItem addIngredientItem = new JMenuItem("Cadastrar Novo...");
         JMenuItem listIngredientsItem = new JMenuItem("Listar Todos...");
 
-        addIngredientItem.addActionListener(e ->
-                JOptionPane.showMessageDialog(this, "Funcionalidade 'Cadastrar Ingrediente' a ser implementada!")
+        addIngredientItem.addActionListener(e -> {
+                AddIngredientView addIngredientDialog = new AddIngredientView(this, controller);
+                addIngredientDialog.setVisible(true);
+            }
         );
         listIngredientsItem.addActionListener(e -> {
             ListAllIngredientsView listView = new ListAllIngredientsView(controller);
