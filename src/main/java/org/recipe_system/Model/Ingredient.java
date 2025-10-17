@@ -1,12 +1,14 @@
 package org.recipe_system.Model;
 
-public class Ingredient {
-    private String name;
-    private int quantity_in_stock;
+import java.io.Serializable;
 
-    public Ingredient(String name, int quantity_in_stock) {
+public class Ingredient implements Serializable {
+    private String name;
+    private int qtd_in_stock;
+
+    public Ingredient(String name, int qtd_in_stock) {
         this.name = name;
-        this.quantity_in_stock = quantity_in_stock;
+        this.qtd_in_stock = qtd_in_stock;
     }
 
     // Getters e Setters
@@ -18,11 +20,19 @@ public class Ingredient {
         this.name = name;
     }
 
-    public int getQuantity_in_stock() {
-        return quantity_in_stock;
+    public int getQtd_in_stock() {
+        return qtd_in_stock;
     }
 
-    public void setQuantity_in_stock(int quantity_in_stock) {
-        this.quantity_in_stock = quantity_in_stock;
+    public void setQtd_in_stock(int qtd_in_stock) {
+        this.qtd_in_stock = qtd_in_stock;
+    }
+
+    @Override
+    public String toString() {
+        return "Ingredient{" +
+                "name='" + name + '\'' +
+                ", qtd_in_stock=" + qtd_in_stock +
+                '}';
     }
 }

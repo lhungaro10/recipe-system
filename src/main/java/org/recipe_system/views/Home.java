@@ -1,11 +1,13 @@
 package org.recipe_system.views;
 
+import org.recipe_system.Controller.Controller;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class Home extends JFrame {
-
+    public Controller controller = new Controller();
     public Home() {
         // --- Configuração básica da janela (JFrame) ---
         super.setTitle("Sistema de Receitas");
@@ -70,9 +72,10 @@ public class Home extends JFrame {
         addIngredientItem.addActionListener(e ->
                 JOptionPane.showMessageDialog(this, "Funcionalidade 'Cadastrar Ingrediente' a ser implementada!")
         );
-        listIngredientsItem.addActionListener(e ->
-                JOptionPane.showMessageDialog(this, "Funcionalidade 'Ver Ingredientes' a ser implementada!")
-        );
+        listIngredientsItem.addActionListener(e -> {
+            ListAllIngredientsView listView = new ListAllIngredientsView(controller);
+            listView.setVisible(true);
+        });
 
         ingredientsMenu.add(addIngredientItem);
         ingredientsMenu.add(listIngredientsItem);

@@ -5,12 +5,11 @@ import java.util.List;
 
 public class System {
     // Relação "Contains" 1 para N com Recipe
-    private List<Recipe> recipes;
+
     // Relação "Contains" 1 para N com Ingredient
     private List<Ingredient> ingredients;
 
     public System() {
-        this.recipes = new ArrayList<Recipe>();
         this.ingredients = new ArrayList<Ingredient>();
     }
 
@@ -41,9 +40,7 @@ public class System {
     }
 
     // Getters para acesso aos dados centrais
-    public List<Recipe> getRecipes() {
-        return recipes;
-    }
+
 
     public List<Ingredient> getIngredients() {
         return ingredients;
