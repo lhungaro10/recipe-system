@@ -49,6 +49,13 @@ public class Controller {
         return this.ingredientCatalog.editIngredient(ingredient, name, qtd_in_stock);
     }
 
+    public Boolean removeIngredient(Ingredient ingredient) {
+        if(!this.ingredientCatalog.verifyIngredientExists(ingredient)){
+            return false;
+        }
+        return this.ingredientCatalog.removeIngredient(ingredient);
+    }
+
     public ArrayList<Ingredient> listIngredients() {
         return this.ingredientCatalog.getIngredients();
     }

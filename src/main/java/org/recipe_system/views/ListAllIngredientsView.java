@@ -40,7 +40,7 @@ public class ListAllIngredientsView extends JFrame {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 
-// Aplica o alinhamento central em todas as colunas
+        // Aplica o alinhamento central em todas as colunas
         for (int i = 0; i < table.getColumnCount(); i++) {
             table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
@@ -61,10 +61,22 @@ public class ListAllIngredientsView extends JFrame {
 
         table.getColumn("Remover").setCellEditor(new JTableButtonEditor(new JCheckBox(), (row) -> {
             Ingredient ing = ingredients.get(row);
-//            controller.removeIngredient(ing); // Implemente este método no Controller
-            JOptionPane.showMessageDialog(this, "Removido: " + ing.getName());
-            dispose();
-            new ListAllIngredientsView(controller).setVisible(true);
+            int confirm = JOptionPane.showConfirmDialog(this,
+                    "Deseja remover o ingrediente: " + ing.getName() + "?",
+                    "Confirmar remoção",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+            if (confirm == JOptionPane.YES_OPTION) {
+                Boolean success = controller.removeIngredient(ing); // Implemente este método no Controller
+                if (!success) {
+                    JOptionPane.showMessageDialog(this, "Erro ao remover o ingrediente: " + ing.getName(),
+                            "Erro", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                JOptionPane.showMessageDialog(this, "Removido: " + ing.getName());
+                dispose();
+                new ListAllIngredientsView(controller).setVisible(true);
+            }
         }));
 
         JScrollPane scrollPane = new JScrollPane(table);

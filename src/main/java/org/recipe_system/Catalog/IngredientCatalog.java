@@ -78,6 +78,42 @@ public class IngredientCatalog {
         }
     }
 
+    public Boolean removeIngredient(Ingredient ingredient) {
+        try {
+            ArrayList<Ingredient> tempList = this.ingredientPersistence.readFromFile().orElse(new ArrayList<Ingredient>());
+
+            Ingredient toRemove = null;
+            for(Ingredient item : tempList){
+                if(item.getName().equals(ingredient.getName())){
+                    toRemove = item;
+                    break;
+                }
+            }
+            if (toRemove != null) {
+                tempList.remove(toRemove); // Remove o ingrediente se existir
+            } else {
+                return false; // Ingrediente não encontrado
+            }
+            this.setIngredients(tempList);
+            this.ingredientPersistence.saveToFile(this.ingredients);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    public Boolean verifyIngredientExists(Ingredient ingredient) {
+        ArrayList<Ingredient> tempList = this.ingredientPersistence.readFromFile().orElse(new ArrayList<Ingredient>());
+
+        for(Ingredient item : tempList){
+            if(item.getName().equals(ingredient.getName())){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public ArrayList<Ingredient> getIngredients() {
         ArrayList<Ingredient> list = this.ingredientPersistence.readFromFile().orElse(new ArrayList<>());
         return list;
