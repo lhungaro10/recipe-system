@@ -1,0 +1,19 @@
+<configuration>
+    <!-- Appender para enviar logs para o console -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- Formato do log: Data, Nível, Thread, Logger, Mensagem -->
+            <pattern>%d{HH:mm:ss.SSS} [%-5level] [%thread] %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Define o nível de log padrão para INFO -->
+    <root level="info">
+        <appender-ref ref="STDOUT" />
+    </root>
+
+    <!-- Você pode definir níveis diferentes para pacotes específicos -->
+    <!-- Por exemplo, para mostrar logs de DEBUG do seu projeto -->
+    <logger name="org.recipe_system" level="debug" />
+
+</configuration>

@@ -165,7 +165,7 @@ public class AddRecipeView extends JFrame {
             }
             // newRecipe.addIngredient(originalIngredient, quantity); // Método hipotético
 
-            // controller.addRecipe(newRecipe);
+             controller.registerRecipe(name, servings, recipeIngredients, recipeIngredientsQtd);
 
             JOptionPane.showMessageDialog(this, "Receita salva com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
             dispose();

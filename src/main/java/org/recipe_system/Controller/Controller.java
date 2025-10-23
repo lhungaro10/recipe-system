@@ -4,11 +4,15 @@ import org.recipe_system.Catalog.IngredientCatalog;
 import org.recipe_system.Model.Ingredient;
 import org.recipe_system.Model.Recipe;
 import org.recipe_system.Model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Controller {
+    private static final Logger logger = LoggerFactory.getLogger(Controller.class);
+
     private User currentUser;
 
     IngredientCatalog ingredientCatalog;
@@ -67,6 +71,8 @@ public class Controller {
 
 //    ================ Recipe Methods ===================
     public Boolean registerRecipe(String name, Integer number_of_servings, ArrayList<Ingredient> ingredients, ArrayList<Integer> qtds) {
+        logger.debug("\nTentando registrar ingrediente: \nnome='{}', \nnumber_of_servings={}, \ningredients={}, \nqtds={}", name, number_of_servings, ingredients, qtds);
+
         System.out.println();
         return null;
     }
