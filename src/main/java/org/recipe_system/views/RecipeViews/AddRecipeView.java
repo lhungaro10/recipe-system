@@ -2,17 +2,16 @@ package org.recipe_system.views.RecipeViews;
 
 import org.recipe_system.Controller.Controller;
 import org.recipe_system.Model.Ingredient;
-import org.recipe_system.Model.Recipe;
-import org.recipe_system.Utils.StringHandler;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 public class AddRecipeView extends JFrame {
     private JTextField nameField;
@@ -38,6 +37,23 @@ public class AddRecipeView extends JFrame {
         nameField = new JTextField();
         styleTextField(nameField);
 
+        // Adiciona o listener de foco para validar o nome da receita
+        nameField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                String recipeName = nameField.getText().trim().toLowerCase();
+                if (!recipeName.isEmpty() && controller.verifyRecipeAlreadyExists(recipeName)) {
+                    JOptionPane.showMessageDialog(
+                            AddRecipeView.this,
+                            "Já existe uma receita cadastrada com este nome.",
+                            "Nome Duplicado",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                    nameField.setText(""); // Limpa o campo de texto
+                }
+            }
+        });
+
         JLabel servingsLabel = new JLabel("Número de Refeições:");
         servingsField = new JTextField();
         styleTextField(servingsField);
@@ -55,7 +71,7 @@ public class AddRecipeView extends JFrame {
         gbc.weighty = 1.0;
 
         // Tabela de ingredientes disponíveis
-        allIngredients = controller.listIngredients(); // Supondo que este método exista
+        allIngredients = controller.listIngredients();
         availableIngredientsModel = new DefaultTableModel(new Object[]{"Ingredientes Disponíveis"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -110,7 +126,7 @@ public class AddRecipeView extends JFrame {
         saveButton.addActionListener(e -> saveRecipe(controller));
 
         pack();
-        setSize(800, 500); // Definindo um tamanho maior para acomodar as tabelas
+        setSize(800, 500);
     }
 
     private void transferIngredient(JTable sourceTable, DefaultTableModel sourceModel, DefaultTableModel destModel, boolean isAdding) {
@@ -150,11 +166,10 @@ public class AddRecipeView extends JFrame {
                 String ingredientName = (String) selectedIngredientsModel.getValueAt(i, 0);
                 int quantity = (Integer) selectedIngredientsModel.getValueAt(i, 1);
 
-                // Encontrar o objeto Ingredient original para manter o ID
                 Ingredient originalIngredient = allIngredients.stream()
                         .filter(ing -> ing.getName().equals(ingredientName))
                         .findFirst()
-                        .orElse(null); // Ou criar um novo se preferir
+                        .orElse(null);
 
                 if (originalIngredient == null) {
                     JOptionPane.showMessageDialog(this, "Ocorreu um erro durante a seleção de ingrediente.", "Ingrediente inválido", JOptionPane.ERROR_MESSAGE);
@@ -163,9 +178,12 @@ public class AddRecipeView extends JFrame {
                 recipeIngredients.add(originalIngredient);
                 recipeIngredientsQtd.add(quantity);
             }
-            // newRecipe.addIngredient(originalIngredient, quantity); // Método hipotético
 
-             controller.registerRecipe(name, servings, recipeIngredients, recipeIngredientsQtd);
+            Boolean success = controller.registerRecipe(name, servings, recipeIngredients, recipeIngredientsQtd);
+            if (!success) {
+                JOptionPane.showMessageDialog(this, "Erro ao salvar a receita. Verifique os dados e tente novamente.", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
             JOptionPane.showMessageDialog(this, "Receita salva com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
             dispose();
@@ -198,14 +216,14 @@ public class AddRecipeView extends JFrame {
         @Override
         public Class<?> getColumnClass(int columnIndex) {
             if (columnIndex == 1) {
-                return Integer.class; // Coluna de quantidade é numérica
+                return Integer.class;
             }
             return String.class;
         }
 
         @Override
         public boolean isCellEditable(int row, int column) {
-            return column == 1; // Apenas a coluna "Quantidade" é editável
+            return column == 1;
         }
 
         @Override
@@ -216,11 +234,9 @@ public class AddRecipeView extends JFrame {
                     if (value > 0) {
                         super.setValueAt(value, row, column);
                     } else {
-                        // Informa o usuário que o valor deve ser positivo
                         JOptionPane.showMessageDialog(null, "A quantidade deve ser um número inteiro positivo.", "Valor Inválido", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (NumberFormatException e) {
-                    // Informa o usuário que o valor deve ser um número
                     JOptionPane.showMessageDialog(null, "Por favor, insira um número válido para a quantidade.", "Formato Inválido", JOptionPane.ERROR_MESSAGE);
                 }
             } else {

@@ -1,6 +1,7 @@
 package org.recipe_system.Controller;
 
 import org.recipe_system.Catalog.IngredientCatalog;
+import org.recipe_system.Catalog.RecipeCatalog;
 import org.recipe_system.Model.Ingredient;
 import org.recipe_system.Model.Recipe;
 import org.recipe_system.Model.User;
@@ -16,9 +17,11 @@ public class Controller {
     private User currentUser;
 
     IngredientCatalog ingredientCatalog;
+    RecipeCatalog recipeCatalog;
 
     public Controller() {
         this.ingredientCatalog = new IngredientCatalog();
+        this.recipeCatalog = new RecipeCatalog();
     }
 
     public void setCurrentUser(User user) {
@@ -71,14 +74,45 @@ public class Controller {
 
 //    ================ Recipe Methods ===================
     public Boolean registerRecipe(String name, Integer number_of_servings, ArrayList<Ingredient> ingredients, ArrayList<Integer> qtds) {
-        logger.debug("\nTentando registrar ingrediente: \nnome='{}', \nnumber_of_servings={}, \ningredients={}, \nqtds={}", name, number_of_servings, ingredients, qtds);
+        logger.info("Init register recipe");
+        if(!this.validateCounts(ingredients, qtds) || !this.validateName(name) || !this.validateNumber(number_of_servings)) {
+           return Boolean.FALSE;
+        }
+        logger.info("After first recipe validation");
 
-        System.out.println();
-        return null;
+        Recipe newRecipe = new Recipe(name, number_of_servings);
+
+        logger.info("After instantiate recipe");
+
+        for(int i = 0; i < ingredients.size(); i++) {
+            if(!newRecipe.validateNumber(qtds.get(i))) {
+                logger.error("Falha ao validar quantidade do ingrediente: {}", ingredients.get(i).getName());
+                return Boolean.FALSE;
+            }
+            if(!newRecipe.add_ingredient(ingredients.get(i),qtds.get(i))) {
+                logger.error("Falha ao adicionar quantidade do ingrediente: {}", ingredients.get(i).getName());
+                return Boolean.FALSE;
+            }
+        }
+        logger.info("After instantiate add RecipeIngredients");
+
+        return this.recipeCatalog.insertRecipe(newRecipe);
     }
 
-    private Boolean validateCounts(ArrayList<Ingredient> ingredients, Integer qtds) {
-        return null;
+    public Boolean editRecipe(Recipe recipe, String name, Integer number_of_servings, ArrayList<Ingredient> ingredients, ArrayList<Integer> qtds) {
+        logger.info("Init edit recipe");
+        if(!this.validateCounts(ingredients, qtds) || !this.validateName(name) || !this.validateNumber(number_of_servings)) {
+           return Boolean.FALSE;
+        }
+        logger.info("After first recipe validation");
+
+
+
+        return Boolean.TRUE;
+    }
+
+    private Boolean validateCounts(ArrayList<Ingredient> ingredients, ArrayList<Integer> qtds) {
+        return ingredients.size() == qtds.size();
     }
 
 
@@ -92,6 +126,7 @@ public class Controller {
         return !name.isEmpty();
     }
 
-    public void addRecipe(Recipe newRecipe) {
+    public Boolean verifyRecipeAlreadyExists(String Name){
+        return this.recipeCatalog.getRecipeByName(Name) != null;
     }
 }

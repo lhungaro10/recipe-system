@@ -18,8 +18,12 @@ public class Recipe implements Serializable {
 
     public boolean add_ingredient(Ingredient ingredient, int qtd) {
 
-        RecipeIngredient newRecipeIngredient = new RecipeIngredient(ingredient, qtd);
+        RecipeIngredient newRecipeIngredient = new RecipeIngredient(ingredient.getName(), qtd);
         return this.recipeIngredients.add(newRecipeIngredient);
+    }
+
+    public Boolean validateNumber(Integer qtd_in_stock) {
+        return qtd_in_stock >= 0;
     }
 
     public boolean remove_ingredient(RecipeIngredient recipeIngredient) {

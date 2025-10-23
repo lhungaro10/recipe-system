@@ -1,21 +1,23 @@
 package org.recipe_system.Model;
 
-public class RecipeIngredient {
-    private Ingredient ingredient;
+import java.io.Serializable;
+
+public class RecipeIngredient implements Serializable {
+    private String ingredient_name;
     private int required_quantity;
 
-    public RecipeIngredient(Ingredient ingredient, int required_quantity) {
-        this.ingredient = ingredient;
+    public RecipeIngredient(String ingredient, int required_quantity) {
+        this.ingredient_name = ingredient;
         this.required_quantity = required_quantity;
     }
 
     // Getters e Setters
-    public Ingredient getIngredient() {
-        return ingredient;
+    public String getIngredient_name() {
+        return ingredient_name;
     }
 
-    public void setIngredient(Ingredient ingredient) {
-        this.ingredient = ingredient;
+    public void setIngredient_name(String ingredient_name) {
+        this.ingredient_name = ingredient_name;
     }
 
     public int getRequired_quantity() {
