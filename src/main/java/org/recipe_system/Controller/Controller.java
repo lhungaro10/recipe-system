@@ -22,11 +22,13 @@ public class Controller {
 
 
     public Boolean registerIngredient(String name, int qtd_in_stock) {
-        if(this.validateName(name)){
+        System.out.println(this.validateName(name));
+        System.out.println(this.validateNumber(qtd_in_stock));
+        if(!this.validateName(name) || !this.validateNumber(qtd_in_stock)){
             return false;
         }
         List<Ingredient> ingredients = this.ingredientCatalog.getIngredients();
-        Ingredient ingredient = new Ingredient(name, qtd_in_stock);
+        Ingredient ingredient = new Ingredient(name.trim().toLowerCase(), qtd_in_stock);
 
         Integer numberInStock = this.getNumberInStock(ingredient);
 
@@ -43,12 +45,6 @@ public class Controller {
         }
 
         List<Ingredient> ingredients = this.ingredientCatalog.getIngredients();
-
-        Integer numberInStock = this.getNumberInStock(new Ingredient(name, qtd_in_stock));
-
-        if (numberInStock == 0) {
-            return false;
-        }
 
         return this.ingredientCatalog.editIngredient(ingredient, name, qtd_in_stock);
     }

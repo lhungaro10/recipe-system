@@ -7,10 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IngredientCatalog {
-    private final FilePersistence<Ingredient> ingredientPersistence = new FilePersistence<>("ingredient.data");
+    private FilePersistence<Ingredient> ingredientPersistence;
     private ArrayList<Ingredient> ingredients;
 
     public IngredientCatalog(){
+        this.ingredientPersistence = new FilePersistence<>("ingredient.data");
         this.ingredients = ingredientPersistence.readFromFile().orElse(null);
         if(this.ingredients == null){
             this.ingredients = new ArrayList<Ingredient>();

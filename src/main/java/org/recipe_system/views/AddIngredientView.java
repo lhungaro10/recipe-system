@@ -64,8 +64,11 @@ public class AddIngredientView extends JDialog {
             }
             try {
                 int qtd = Integer.parseInt(qtdText);
-                controller.registerIngredient(name, qtd);
-                JOptionPane.showMessageDialog(this, "Ingrediente cadastrado com sucesso!");
+                Boolean success = controller.registerIngredient(name, qtd);
+                if (success) {
+                    JOptionPane.showMessageDialog(this, "Ingrediente cadastrado com sucesso!");
+                    return;
+                }
                 nameField.setText("");
                 qtdField.setText("");
             } catch (NumberFormatException ex) {

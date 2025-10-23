@@ -2,6 +2,7 @@ package org.recipe_system.views;
 
 import org.recipe_system.Controller.Controller;
 import org.recipe_system.Model.Ingredient;
+import org.recipe_system.Utils.StringHandler;
 
 import javax.swing.*;
 import javax.swing.table.*;
@@ -23,7 +24,7 @@ public class ListAllIngredientsView extends JFrame {
         for (int i = 0; i < ingredients.size(); i++) {
             Ingredient ing = ingredients.get(i);
             data[i][0] = ing.getQtd_in_stock();
-            data[i][1] = ing.getName();
+            data[i][1] = StringHandler.capitalize(ing.getName());
             data[i][2] = "Editar";
             data[i][3] = "Remover";
         }
