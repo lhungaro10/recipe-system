@@ -1,6 +1,9 @@
 package org.recipe_system.views;
 
 import org.recipe_system.Controller.Controller;
+import org.recipe_system.views.IngredientsViews.AddIngredientView;
+import org.recipe_system.views.IngredientsViews.ListAllIngredientsView;
+import org.recipe_system.views.RecipeViews.AddRecipeView;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -54,8 +57,10 @@ public class Home extends JFrame {
         JMenuItem addRecipeItem = new JMenuItem("Cadastrar Nova...");
         JMenuItem listRecipesItem = new JMenuItem("Listar Todas...");
 
-        addRecipeItem.addActionListener(e ->
-                JOptionPane.showMessageDialog(this, "Funcionalidade 'Cadastrar Receita' a ser implementada!")
+        addRecipeItem.addActionListener(e -> {
+                AddRecipeView addRecipeDialog = new AddRecipeView(this, controller);
+                addRecipeDialog.setVisible(true);
+            }
         );
         listRecipesItem.addActionListener(e ->
                 JOptionPane.showMessageDialog(this, "Funcionalidade 'Ver Receitas' a ser implementada!")

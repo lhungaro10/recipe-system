@@ -1,4 +1,4 @@
-package org.recipe_system.views;
+package org.recipe_system.views.IngredientsViews;
 
 import org.recipe_system.Controller.Controller;
 import org.recipe_system.Model.Ingredient;
@@ -7,7 +7,6 @@ import org.recipe_system.Utils.StringHandler;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.ArrayList;
 
 public class ListAllIngredientsView extends JFrame {

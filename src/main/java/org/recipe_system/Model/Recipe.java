@@ -1,9 +1,10 @@
 package org.recipe_system.Model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Recipe {
+public class Recipe implements Serializable {
     private String name;
     private int number_of_servings;
 

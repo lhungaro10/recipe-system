@@ -1,4 +1,4 @@
-package org.recipe_system.views;
+package org.recipe_system.views.IngredientsViews;
 
 import org.recipe_system.Controller.Controller;
 

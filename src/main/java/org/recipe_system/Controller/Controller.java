@@ -2,6 +2,7 @@ package org.recipe_system.Controller;
 
 import org.recipe_system.Catalog.IngredientCatalog;
 import org.recipe_system.Model.Ingredient;
+import org.recipe_system.Model.Recipe;
 import org.recipe_system.Model.User;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class Controller {
         this.currentUser = user;
     }
 
-
+//    ================ Ingredient Methods ===================
     public Boolean registerIngredient(String name, int qtd_in_stock) {
         System.out.println(this.validateName(name));
         System.out.println(this.validateNumber(qtd_in_stock));
@@ -64,6 +65,18 @@ public class Controller {
         return this.ingredientCatalog.getQtdInStock(ingredient);
     }
 
+//    ================ Recipe Methods ===================
+    public Boolean registerRecipe(String name, Integer number_of_servings, ArrayList<Ingredient> ingredients, ArrayList<Integer> qtds) {
+        System.out.println();
+        return null;
+    }
+
+    private Boolean validateCounts(ArrayList<Ingredient> ingredients, Integer qtds) {
+        return null;
+    }
+
+
+
     private Boolean validateNumber(Integer qtd_in_stock) {
         return qtd_in_stock >= 0;
     }
@@ -73,4 +86,6 @@ public class Controller {
         return !name.isEmpty();
     }
 
+    public void addRecipe(Recipe newRecipe) {
+    }
 }
