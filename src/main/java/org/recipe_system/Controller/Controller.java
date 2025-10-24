@@ -4,6 +4,7 @@ import org.recipe_system.Catalog.IngredientCatalog;
 import org.recipe_system.Catalog.RecipeCatalog;
 import org.recipe_system.Model.Ingredient;
 import org.recipe_system.Model.Recipe;
+import org.recipe_system.Model.RecipeIngredient;
 import org.recipe_system.Model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,9 +107,34 @@ public class Controller {
         }
         logger.info("After first recipe validation");
 
+        recipe.setName(name);
+        recipe.setNumber_of_servings(number_of_servings);
+
+
+        for(int i = 0; i < ingredients.size(); i++) {
+            if(!recipe.validateNumber(qtds.get(i))) {
+                logger.error("Falha ao validar quantidade do ingrediente: {}", ingredients.get(i).getName());
+                return Boolean.FALSE;
+            }
+            if(!recipe.add_ingredient(ingredients.get(i),qtds.get(i))) {
+                logger.error("Falha ao adicionar quantidade do ingrediente: {}", ingredients.get(i).getName());
+                return Boolean.FALSE;
+            }
+        }
+
+        logger.info("After add RecipeIngredients");
+
+        recipe.remove_ingredient_not_in(this.getRecipeIngredientsToKeep(ingredients, qtds));
+
+        this.recipeCatalog.editRecipe(recipe);
+
 
 
         return Boolean.TRUE;
+    }
+
+    public ArrayList<Recipe> listRecipes(){
+        return this.recipeCatalog.getRecipes();
     }
 
     private Boolean validateCounts(ArrayList<Ingredient> ingredients, ArrayList<Integer> qtds) {
@@ -124,6 +150,15 @@ public class Controller {
     // o retorno foi negado aqui para o nome da função fazer sentido.
     private Boolean validateName(String name){
         return !name.isEmpty();
+    }
+
+    private ArrayList<RecipeIngredient> getRecipeIngredientsToKeep(ArrayList<Ingredient> ingredients, ArrayList<Integer> qtds) {
+        ArrayList<RecipeIngredient> recipeIngredients = new ArrayList<RecipeIngredient>();
+        for(int i = 0; i < ingredients.size(); i++) {
+            RecipeIngredient recipeIngredient = new RecipeIngredient(ingredients.get(i).getName(), qtds.get(i));
+            recipeIngredients.add(recipeIngredient);
+        }
+        return recipeIngredients;
     }
 
     public Boolean verifyRecipeAlreadyExists(String Name){

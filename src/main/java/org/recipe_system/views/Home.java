@@ -4,6 +4,7 @@ import org.recipe_system.Controller.Controller;
 import org.recipe_system.views.IngredientsViews.AddIngredientView;
 import org.recipe_system.views.IngredientsViews.ListAllIngredientsView;
 import org.recipe_system.views.RecipeViews.AddRecipeView;
+import org.recipe_system.views.RecipeViews.ListRecipesView;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -62,8 +63,10 @@ public class Home extends JFrame {
                 addRecipeDialog.setVisible(true);
             }
         );
-        listRecipesItem.addActionListener(e ->
-                JOptionPane.showMessageDialog(this, "Funcionalidade 'Ver Receitas' a ser implementada!")
+        listRecipesItem.addActionListener(e -> {
+                ListRecipesView listRecipesView = new ListRecipesView(controller);
+                listRecipesView.setVisible(true);
+            }
         );
 
         recipesMenu.add(addRecipeItem);

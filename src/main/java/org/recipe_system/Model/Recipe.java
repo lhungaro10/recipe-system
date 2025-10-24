@@ -1,46 +1,46 @@
+// Em src/main/java/org/recipe_system/Model/Recipe.java
 package org.recipe_system.Model;
 
 import java.io.Serializable;
+import java.lang.System;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 public class Recipe implements Serializable {
+    private static final AtomicLong count = new AtomicLong(System.currentTimeMillis());
+    private Long id;
     private String name;
-    private int number_of_servings;
+    private Integer number_of_servings;
+    private ArrayList<RecipeIngredient> recipeIngredients;
 
-    private List<RecipeIngredient> recipeIngredients;
-
-    public Recipe(String name, int number_of_servings) {
+    public Recipe(String name, Integer number_of_servings) {
+        this.id = count.incrementAndGet();
         this.name = name;
         this.number_of_servings = number_of_servings;
-        this.recipeIngredients = new ArrayList<RecipeIngredient>();
+        this.recipeIngredients = new ArrayList<>();
     }
 
-    public boolean add_ingredient(Ingredient ingredient, int qtd) {
-
-        RecipeIngredient newRecipeIngredient = new RecipeIngredient(ingredient.getName(), qtd);
-        return this.recipeIngredients.add(newRecipeIngredient);
-    }
-
-    public Boolean validateNumber(Integer qtd_in_stock) {
-        return qtd_in_stock >= 0;
-    }
-
-    public boolean remove_ingredient(RecipeIngredient recipeIngredient) {
-
-        return this.recipeIngredients.remove(recipeIngredient);
-    }
-
-    public boolean set_ingredient(RecipeIngredient oldRecipeIngredient, int qtd) {
-
-        if (this.recipeIngredients.contains(oldRecipeIngredient)) {
-            oldRecipeIngredient.setRequired_quantity(qtd);
-            return true;
+    public Recipe(String name, int servings, ArrayList<Ingredient> ingredients, ArrayList<Integer> quantities) {
+        this.id = count.incrementAndGet();
+        this.name = name;
+        this.number_of_servings = servings;
+        this.recipeIngredients = new ArrayList<>();
+        for (int i = 0; i < ingredients.size(); i++) {
+            this.add_ingredient(ingredients.get(i), quantities.get(i));
         }
-        return false;
     }
 
-    // Getters e Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
@@ -49,15 +49,55 @@ public class Recipe implements Serializable {
         this.name = name;
     }
 
-    public int getNumber_of_servings() {
+    public Integer getServings() {
         return number_of_servings;
     }
 
-    public void setNumber_of_servings(int number_of_servings) {
+    public void setNumber_of_servings(Integer number_of_servings) {
         this.number_of_servings = number_of_servings;
     }
 
-    public List<RecipeIngredient> getRecipeIngredients() {
+    public List<RecipeIngredient> getIngredients() {
         return recipeIngredients;
+    }
+
+    public boolean add_ingredient(Ingredient ingredient, Integer qtd) {
+        if (validateNumber(qtd)) {
+            this.recipeIngredients.add(new RecipeIngredient(ingredient.getName(), qtd));
+            return true;
+        }
+        return false;
+    }
+
+    public void remove_ingredient_not_in(ArrayList<RecipeIngredient> ingredientsToKeep) {
+        this.recipeIngredients.clear();
+        this.recipeIngredients.addAll(ingredientsToKeep);
+    }
+
+    public boolean validateNumber(Integer number) {
+        return number > 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Recipe recipe = (Recipe) o;
+        return Objects.equals(id, recipe.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Recipe{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", number_of_servings=" + number_of_servings +
+                ", recipeIngredients=" + recipeIngredients +
+                '}';
     }
 }
