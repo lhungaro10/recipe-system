@@ -4,7 +4,6 @@ import org.recipe_system.Model.Ingredient;
 import org.recipe_system.Utils.FilePersistence;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class IngredientCatalog {
     private FilePersistence<Ingredient> ingredientPersistence;
@@ -114,7 +113,7 @@ public class IngredientCatalog {
         return false;
     }
 
-    public ArrayList<Ingredient> getIngredients() {
+    public ArrayList<Ingredient> getAllIngredients() {
         ArrayList<Ingredient> list = this.ingredientPersistence.readFromFile().orElse(new ArrayList<>());
         return list;
     }

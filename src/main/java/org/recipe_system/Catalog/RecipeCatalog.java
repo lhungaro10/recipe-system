@@ -78,7 +78,7 @@ public class RecipeCatalog {
         }
     }
 
-    public ArrayList<Recipe> getRecipes() {
+    public ArrayList<Recipe> getAllRecipes() {
         return this.recipes;
     }
 

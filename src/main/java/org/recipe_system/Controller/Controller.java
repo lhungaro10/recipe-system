@@ -36,7 +36,7 @@ public class Controller {
         if(!this.validateName(name) || !this.validateNumber(qtd_in_stock)){
             return false;
         }
-        List<Ingredient> ingredients = this.ingredientCatalog.getIngredients();
+        List<Ingredient> ingredients = this.ingredientCatalog.getAllIngredients();
         Ingredient ingredient = new Ingredient(name.trim().toLowerCase(), qtd_in_stock);
 
         Integer numberInStock = this.getNumberInStock(ingredient);
@@ -53,7 +53,7 @@ public class Controller {
             return false;
         }
 
-        List<Ingredient> ingredients = this.ingredientCatalog.getIngredients();
+        List<Ingredient> ingredients = this.ingredientCatalog.getAllIngredients();
 
         return this.ingredientCatalog.editIngredient(ingredient, name, qtd_in_stock);
     }
@@ -65,8 +65,8 @@ public class Controller {
         return this.ingredientCatalog.removeIngredient(ingredient);
     }
 
-    public ArrayList<Ingredient> listIngredients() {
-        return this.ingredientCatalog.getIngredients();
+    public ArrayList<Ingredient> getAllIngredients() {
+        return this.ingredientCatalog.getAllIngredients();
     }
 
     private Integer getNumberInStock(Ingredient ingredient) {
@@ -133,8 +133,8 @@ public class Controller {
         return Boolean.TRUE;
     }
 
-    public ArrayList<Recipe> listRecipes(){
-        return this.recipeCatalog.getRecipes();
+    public ArrayList<Recipe> getAllRecipes(){
+        return this.recipeCatalog.getAllRecipes();
     }
 
     private Boolean validateCounts(ArrayList<Ingredient> ingredients, ArrayList<Integer> qtds) {

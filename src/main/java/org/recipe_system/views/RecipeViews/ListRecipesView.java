@@ -3,11 +3,9 @@ package org.recipe_system.views.RecipeViews;
 import org.recipe_system.Controller.Controller;
 import org.recipe_system.Model.Recipe;
 import org.recipe_system.Utils.StringHandler;
-import org.recipe_system.views.Home;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
@@ -22,7 +20,7 @@ public class ListRecipesView extends JFrame {
         setLayout(new BorderLayout(10, 10));
         getRootPane().setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        ArrayList<Recipe> recipes = controller.listRecipes();
+        ArrayList<Recipe> recipes = controller.getAllRecipes();
 
         String[] columnNames = {"Nome", "Refeições", "Editar", "Remover"};
         Object[][] data = new Object[recipes.size()][4];

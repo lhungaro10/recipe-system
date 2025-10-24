@@ -71,7 +71,7 @@ public class AddRecipeView extends JDialog {
         gbc.weighty = 1.0;
 
         // Tabela de ingredientes disponíveis
-        allIngredients = controller.listIngredients();
+        allIngredients = controller.getAllIngredients();
         availableIngredientsModel = new DefaultTableModel(new Object[]{"Ingredientes Disponíveis"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {

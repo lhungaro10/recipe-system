@@ -16,7 +16,7 @@ public class ListAllIngredientsView extends JFrame {
         setSize(600, 400);
         setLocationRelativeTo(null);
 
-        ArrayList<Ingredient> ingredients = controller.listIngredients();
+        ArrayList<Ingredient> ingredients = controller.getAllIngredients();
 
         String[] columnNames = {"Estoque", "Nome", "Editar", "Remover"};
         Object[][] data = new Object[ingredients.size()][4];

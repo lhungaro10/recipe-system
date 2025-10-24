@@ -76,7 +76,7 @@ public class EditRecipeView extends JDialog {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
 
-        allIngredients = controller.listIngredients();
+        allIngredients = controller.getAllIngredients();
         List<String> recipeIngredientNames = recipeToEdit.getIngredients().stream()
                 .map(RecipeIngredient::getIngredient_name)
                 .collect(Collectors.toList());
