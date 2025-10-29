@@ -69,6 +69,17 @@ public class Recipe implements Serializable {
         return false;
     }
 
+    public RecipeIngredient getRecipeIngredient(Ingredient ingredient) {
+        if (ingredient == null) return null;
+        String name = ingredient.getName();
+        for (RecipeIngredient ri : this.recipeIngredients) {
+            if (ri != null && Objects.equals(name, ri.getIngredient_name())) {
+                return ri;
+            }
+        }
+        return null;
+    }
+
     public void remove_ingredient_not_in(ArrayList<RecipeIngredient> ingredientsToKeep) {
         this.recipeIngredients.clear();
         this.recipeIngredients.addAll(ingredientsToKeep);

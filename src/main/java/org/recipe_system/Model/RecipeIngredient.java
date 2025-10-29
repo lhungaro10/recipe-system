@@ -11,6 +11,10 @@ public class RecipeIngredient implements Serializable {
         this.required_quantity = required_quantity;
     }
 
+    public Boolean validateNumber(Integer qtd_in_stock) {
+        return qtd_in_stock >= 0;
+    }
+
     // Getters e Setters
     public String getIngredient_name() {
         return ingredient_name;

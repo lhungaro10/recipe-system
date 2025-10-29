@@ -112,14 +112,15 @@ public class Controller {
 
 
         for(int i = 0; i < ingredients.size(); i++) {
-            if(!recipe.validateNumber(qtds.get(i))) {
-                logger.error("Falha ao validar quantidade do ingrediente: {}", ingredients.get(i).getName());
-                return Boolean.FALSE;
+            RecipeIngredient ri = recipe.getRecipeIngredient(ingredients.get(i));
+
+            if(ri != null) {
+                if (!ri.validateNumber(qtds.get(i))) continue;
+                ri.setRequired_quantity(qtds.get(i));
+                continue;
             }
-            if(!recipe.add_ingredient(ingredients.get(i),qtds.get(i))) {
-                logger.error("Falha ao adicionar quantidade do ingrediente: {}", ingredients.get(i).getName());
-                return Boolean.FALSE;
-            }
+
+            recipe.add_ingredient(ingredients.get(i),qtds.get(i));
         }
 
         logger.info("After add RecipeIngredients");
