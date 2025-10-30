@@ -101,14 +101,14 @@ public class ListRecipesView extends JFrame {
 
                 if (confirm == JOptionPane.YES_OPTION) {
                     // Mantém o mesmo fluxo de remoção utilizado anteriormente
-//                    Boolean success = controller.removeRecipe(recipe);
-//                    if (Boolean.TRUE.equals(success)) {
+                    Boolean success = controller.delete_recipe(recipe);
+                    if (Boolean.TRUE.equals(success)) {
                         JOptionPane.showMessageDialog(this, "Receita removida com sucesso!");
-//                        dispose();
-//                        new ListRecipesView(controller).setVisible(true);
-//                    } else {
-//                        JOptionPane.showMessageDialog(this, "Erro ao remover a receita.", "Erro", JOptionPane.ERROR_MESSAGE);
-//                    }
+                        dispose();
+                        new ListRecipesView(controller).setVisible(true);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Erro ao remover a receita.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             });
 

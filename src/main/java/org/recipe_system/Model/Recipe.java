@@ -99,6 +99,10 @@ public class Recipe implements Serializable {
         this.recipeIngredients.addAll(ingredientsToKeep);
     }
 
+    public Boolean remove_all_ingredient() {
+        this.recipeIngredients.clear();
+        return true;
+    }
     public boolean validateNumber(Integer number) {
         return number > 0;
     }

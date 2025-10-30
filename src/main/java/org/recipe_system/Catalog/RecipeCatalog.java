@@ -77,24 +77,63 @@ public class RecipeCatalog {
         }
     }
 
-    public Boolean removeRecipe(Long id) {
-        logger.info("Removing recipe with ID: {}", id);
-        try {
-            ArrayList<Recipe> tempList = this.recipesPersistence.readFromFile().orElse(new ArrayList<>());
-            boolean removed = tempList.removeIf(recipe -> recipe.getId().equals(id));
+    public Boolean delete_recipe(Recipe recipe) {
+        logger.info("Removing recipe with ID: {}", recipe.getId());
 
-            if (!removed) {
-                logger.warn("Recipe with ID {} not found for removal.", id);
+
+        try {
+            Boolean hasDeletedRecipeQueries = this.delete_recipe_queries(recipe);
+
+            if(!hasDeletedRecipeQueries){
+                logger.error("Error on delete recipe queries");
                 return false;
             }
-            this.setRecipes(tempList);
-            this.recipesPersistence.saveToFile(this.recipes);
-            logger.info("Recipe removed successfully de {}", DATA_PATH);
-            return true;
+
+            Boolean isIngredientsRemoved = recipe.remove_all_ingredient();
+
+            if(!isIngredientsRemoved){
+                logger.error("Error on remove recipe ingredients");
+                return false;
+            }
+
+            return this.remove_recipe_from_collection(recipe);
+
+
         } catch (Exception e) {
             logger.error("Error on remove recipe: {}", e.getMessage(), e);
             return false;
         }
+    }
+
+    private Boolean remove_recipe_from_collection(Recipe recipe){
+        try {
+            ArrayList<Recipe> tempList = this.recipesPersistence.readFromFile().orElse(new ArrayList<>());
+            boolean found = false;
+            for (int i = 0; i < tempList.size(); i++) {
+                if (tempList.get(i).getId().equals(recipe.getId())) {
+                    tempList.remove(i);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                logger.warn("Recipe with ID {} not found for deletion.", recipe.getId());
+                return false;
+            }
+            this.setRecipes(tempList);
+            this.recipesPersistence.saveToFile(this.recipes);
+            logger.info("Recipe removed successfully em {}", DATA_PATH);
+            return true;
+        } catch (Exception e) {
+            logger.error("Error on remove recipe from collection: {}", e.getMessage(), e);
+            return false;
+        }
+    }
+
+    // tech debt: will be implemented with recipe queries use case
+    private Boolean delete_recipe_queries(Recipe recipe){
+        logger.info("Not implemented yet");
+        return true;
     }
 
     public ArrayList<Recipe> getAllRecipes() {

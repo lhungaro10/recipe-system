@@ -150,6 +150,10 @@ public class Controller {
         return this.recipeCatalog.getAllRecipes();
     }
 
+    public Boolean delete_recipe(Recipe recipe){
+        return this.recipeCatalog.delete_recipe(recipe);
+    }
+
     private Boolean validateCounts(ArrayList<Ingredient> ingredients, ArrayList<Integer> qtds) {
         return ingredients.size() == qtds.size();
     }
