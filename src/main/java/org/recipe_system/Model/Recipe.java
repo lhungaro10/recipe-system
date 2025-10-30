@@ -57,7 +57,7 @@ public class Recipe implements Serializable {
         this.number_of_servings = number_of_servings;
     }
 
-    public List<RecipeIngredient> getIngredients() {
+    public ArrayList<RecipeIngredient> getIngredients() {
         return recipeIngredients;
     }
 

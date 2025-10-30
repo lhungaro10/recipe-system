@@ -6,77 +6,137 @@ import org.recipe_system.Utils.StringHandler;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class ListRecipesView extends JFrame {
 
     public ListRecipesView(Controller controller) {
         setTitle("Lista de Receitas");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
-        getRootPane().setBorder(new EmptyBorder(10, 10, 10, 10));
+        getRootPane().setBorder(new EmptyBorder(14, 14, 14, 14));
 
         ArrayList<Recipe> recipes = controller.getAllRecipes();
 
-        String[] columnNames = {"Nome", "Refeições", "Editar", "Remover"};
-        Object[][] data = new Object[recipes.size()][4];
-        for (int i = 0; i < recipes.size(); i++) {
-            Recipe recipe = recipes.get(i);
-            data[i][0] = StringHandler.capitalize(recipe.getName());
-            data[i][1] = recipe.getServings(); // Corrigido
-            data[i][2] = "Editar";
-            data[i][3] = "Remover";
+        // Painel de listagem com “cards” e scroll
+        JPanel listPanel = new JPanel();
+        listPanel.setOpaque(false);
+        listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
+
+        Color cardBg = new Color(248, 250, 252);
+        Color cardBorder = new Color(230, 235, 241);
+        Color titleColor = new Color(33, 37, 41);
+        Color subtitleColor = new Color(108, 117, 125);
+
+        for (Recipe recipe : recipes) {
+            RoundedPanel card = new RoundedPanel(14);
+            card.setLayout(new BorderLayout(12, 8));
+            card.setBackground(cardBg);
+            card.setBorder(new EmptyBorder(14, 16, 14, 16));
+
+            // Cabeçalho: Nome e refeições
+            JPanel header = new JPanel(new BorderLayout(8, 8));
+            header.setOpaque(false);
+
+            JLabel nameLabel = new JLabel(StringHandler.capitalize(recipe.getName()));
+            nameLabel.setFont(nameLabel.getFont().deriveFont(Font.BOLD, 16f));
+            nameLabel.setForeground(titleColor);
+
+            JLabel servingsLabel = new JLabel(recipe.getServings() + " refeições");
+            servingsLabel.setFont(servingsLabel.getFont().deriveFont(Font.PLAIN, 13f));
+            servingsLabel.setForeground(subtitleColor);
+
+            header.add(nameLabel, BorderLayout.WEST);
+            header.add(servingsLabel, BorderLayout.EAST);
+
+            // Corpo: Ingredientes
+            JPanel body = new JPanel(new BorderLayout());
+            body.setOpaque(false);
+
+            JLabel ingTitle = new JLabel("Ingredientes");
+            ingTitle.setFont(ingTitle.getFont().deriveFont(Font.BOLD, 13f));
+            ingTitle.setForeground(titleColor);
+
+            JTextArea ingredientsArea = new JTextArea();
+            ingredientsArea.setEditable(false);
+            ingredientsArea.setOpaque(false);
+            ingredientsArea.setLineWrap(true);
+            ingredientsArea.setWrapStyleWord(true);
+            ingredientsArea.setFont(ingredientsArea.getFont().deriveFont(Font.PLAIN, 13f));
+            ingredientsArea.setForeground(subtitleColor);
+
+            String ingredientsText = buildIngredientsText(recipe);
+            ingredientsArea.setText(ingredientsText.isEmpty() ? "Nenhum ingrediente informado." : ingredientsText);
+
+            JPanel ingPanel = new JPanel();
+            ingPanel.setOpaque(false);
+            ingPanel.setLayout(new BorderLayout(0, 6));
+            ingPanel.add(ingTitle, BorderLayout.NORTH);
+            ingPanel.add(ingredientsArea, BorderLayout.CENTER);
+
+            body.add(ingPanel, BorderLayout.CENTER);
+
+            // Rodapé: Botões de ação (Editar/Remover)
+            JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+            actions.setOpaque(false);
+
+            JButton editButton = createActionButton("Editar", new Color(251, 205, 83), Color.BLACK);
+            editButton.addActionListener(e -> {
+                EditRecipeView editRecipeView = new EditRecipeView(this, controller, recipe);
+                editRecipeView.setVisible(true);
+                dispose();
+                new ListRecipesView(controller).setVisible(true);
+            });
+
+            JButton removeButton = createActionButton("Remover", new Color(220, 80, 80), Color.WHITE);
+            removeButton.addActionListener(e -> {
+                int confirm = JOptionPane.showConfirmDialog(this,
+                        "Deseja remover a receita: " + StringHandler.capitalize(recipe.getName()) + "?",
+                        "Confirmar remoção",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE);
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    // Mantém o mesmo fluxo de remoção utilizado anteriormente
+//                    Boolean success = controller.removeRecipe(recipe);
+//                    if (Boolean.TRUE.equals(success)) {
+                        JOptionPane.showMessageDialog(this, "Receita removida com sucesso!");
+//                        dispose();
+//                        new ListRecipesView(controller).setVisible(true);
+//                    } else {
+//                        JOptionPane.showMessageDialog(this, "Erro ao remover a receita.", "Erro", JOptionPane.ERROR_MESSAGE);
+//                    }
+                }
+            });
+
+            actions.add(editButton);
+            actions.add(removeButton);
+
+            card.add(header, BorderLayout.NORTH);
+            card.add(body, BorderLayout.CENTER);
+            card.add(actions, BorderLayout.SOUTH);
+            card.setBorder(BorderFactory.createCompoundBorder(
+                    new LineBorder(cardBorder, 1, true),
+                    new EmptyBorder(10, 12, 12, 12)
+            ));
+
+            listPanel.add(card);
+            listPanel.add(Box.createVerticalStrut(10));
         }
 
-        DefaultTableModel model = new DefaultTableModel(data, columnNames) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return column == 2 || column == 3;
-            }
-        };
-
-        JTable table = new JTable(model);
-        table.setRowHeight(30);
-
-        table.getColumn("Editar").setCellRenderer(new JTableButtonRenderer());
-        table.getColumn("Editar").setCellEditor(new JTableButtonEditor(new JCheckBox(), (row) -> {
-            Recipe recipeToEdit = recipes.get(row);
-            EditRecipeView editRecipeView = new EditRecipeView(this, controller, recipeToEdit);
-            editRecipeView.setVisible(true);
-            dispose();
-            new ListRecipesView(controller).setVisible(true);
-
-        }));
-
-        table.getColumn("Remover").setCellRenderer(new JTableButtonRenderer());
-        table.getColumn("Remover").setCellEditor(new JTableButtonEditor(new JCheckBox(), (row) -> {
-            Recipe recipeToRemove = recipes.get(row);
-            int confirm = JOptionPane.showConfirmDialog(this,
-                    "Deseja remover a receita: " + StringHandler.capitalize(recipeToRemove.getName()) + "?",
-                    "Confirmar remoção",
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.WARNING_MESSAGE);
-
-            if (confirm == JOptionPane.YES_OPTION) {
-//                Boolean success = controller.removeRecipe(recipeToRemove); // Usando ID
-//                if (success) {
-//                    JOptionPane.showMessageDialog(this, "Receita removida com sucesso!");
-//                    dispose();
-//                    new ListRecipesView(controller).setVisible(true);
-//                } else {
-//                    JOptionPane.showMessageDialog(this, "Erro ao remover a receita.", "Erro", JOptionPane.ERROR_MESSAGE);
-//                }
-            }
-        }));
-
-        JScrollPane scrollPane = new JScrollPane(table);
+        JScrollPane scrollPane = new JScrollPane(listPanel,
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.setBorder(null);
         add(scrollPane, BorderLayout.CENTER);
 
+        // Botão Adicionar
         JButton addRecipeButton = new JButton("Adicionar Receita");
+        stylePrimaryButton(addRecipeButton);
         addRecipeButton.addActionListener(e -> {
             AddRecipeView addRecipeView = new AddRecipeView(this, controller);
             addRecipeView.setVisible(true);
@@ -85,68 +145,151 @@ public class ListRecipesView extends JFrame {
         });
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        buttonPanel.setOpaque(false);
         buttonPanel.add(addRecipeButton);
         add(buttonPanel, BorderLayout.SOUTH);
 
         pack();
-        setSize(600, 400);
-    }
-    // Classe interna para renderizar o botão na célula da tabela
-    static class JTableButtonRenderer extends JButton implements TableCellRenderer {
-        public JTableButtonRenderer() {
-            setOpaque(true);
-            setFocusPainted(false);
-        }
-
-        public Component getTableCellRendererComponent(JTable table, Object value,
-                                                       boolean isSelected, boolean hasFocus, int row, int column) {
-            setText((value == null) ? "" : value.toString());
-            if ("Editar".equals(getText())) {
-                setBackground(new Color(251, 205, 83));
-                setForeground(Color.BLACK);
-            } else if ("Remover".equals(getText())) {
-                setBackground(new Color(220, 80, 80));
-                setForeground(Color.WHITE);
-            }
-            return this;
-        }
+        setSize(720, 520);
+        setLocationRelativeTo(null);
     }
 
-    // Classe interna para lidar com o clique no botão da tabela
-    static class JTableButtonEditor extends DefaultCellEditor {
-        private final JButton button;
-        private int row;
-        private final ButtonAction action;
+    private static JButton createActionButton(String text, Color bg, Color fg) {
+        JButton b = new JButton(text);
+        b.setBackground(bg);
+        b.setForeground(fg);
+        b.setFocusPainted(false);
+        b.setBorderPainted(false);
+        b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        b.setFont(b.getFont().deriveFont(Font.BOLD, 12f));
+        b.setOpaque(true);
+        b.setBorder(new EmptyBorder(8, 14, 8, 14));
+        return b;
+    }
 
-        public interface ButtonAction {
-            void onClick(int row);
-        }
+    private static void stylePrimaryButton(JButton b) {
+        b.setBackground(new Color(76, 132, 255));
+        b.setForeground(Color.WHITE);
+        b.setFocusPainted(false);
+        b.setBorderPainted(false);
+        b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        b.setFont(b.getFont().deriveFont(Font.BOLD, 13f));
+        b.setOpaque(true);
+        b.setBorder(new EmptyBorder(10, 16, 10, 16));
+    }
 
-        public JTableButtonEditor(JCheckBox checkBox, ButtonAction action) {
-            super(checkBox);
-            this.action = action;
-            button = new JButton();
-            button.setOpaque(true);
-            button.addActionListener(e -> fireEditingStopped());
-        }
+    // java
+// Substitua o método existente e adicione os dois helpers abaixo
 
-        public Component getTableCellEditorComponent(JTable table, Object value,
-                                                     boolean isSelected, int row, int column) {
-            this.row = row;
-            button.setText((value == null) ? "" : value.toString());
-            if ("Editar".equals(button.getText())) {
-                button.setBackground(new Color(251, 205, 83));
-                button.setForeground(Color.BLACK);
-            } else if ("Remover".equals(button.getText())) {
-                button.setBackground(new Color(220, 80, 80));
-                button.setForeground(Color.WHITE);
+    // Monta linhas no formato: "<quantidade> - <nome>"
+    private static String buildIngredientsText(Recipe recipe) {
+        try {
+            Object ingredientsObj = recipe.getIngredients();
+            if (ingredientsObj instanceof Collection<?>) {
+                StringBuilder sb = new StringBuilder();
+                for (Object item : (Collection<?>) ingredientsObj) {
+                    String name = extractIngredientName(item);
+                    String qty  = extractIngredientQuantity(item);
+                    String line;
+                    if (!qty.isBlank() && !name.isBlank()) {
+                        line = qty + " - " + name;
+                    } else if (!name.isBlank()) {
+                        line = name;
+                    } else {
+                        line = String.valueOf(item);
+                    }
+
+                    if (!line.isBlank()) {
+                        sb.append(line).append("\n");
+                    }
+                }
+                return sb.toString().trim();
             }
-            return button;
+        } catch (Exception ignored) { }
+        return "";
+    }
+
+    // Obtém o nome do ingrediente por reflexão em getters comuns
+    private static String extractIngredientName(Object item) {
+        if (item == null) return "";
+
+        // 1) item.getIngredient_name()
+        try {
+            var m = item.getClass().getMethod("getIngredient_name");
+            Object v = m.invoke(item);
+            if (v != null) return v.toString();
+        } catch (Exception ignored) { }
+
+        // 2) item.getName()
+        try {
+            var m = item.getClass().getMethod("getName");
+            Object v = m.invoke(item);
+            if (v != null) return v.toString();
+        } catch (Exception ignored) { }
+
+        // 3) item.getNome()
+        try {
+            var m = item.getClass().getMethod("getIngredient_name");
+            Object v = m.invoke(item);
+            if (v != null) return v.toString();
+        } catch (Exception ignored) { }
+
+        // 4) item.getIngredient().getName()/getNome()
+        try {
+            var mIng = item.getClass().getMethod("getIngredient");
+            Object ing = mIng.invoke(item);
+            if (ing != null) {
+                try {
+                    var mName = ing.getClass().getMethod("getName");
+                    Object v = mName.invoke(ing);
+                    if (v != null) return v.toString();
+                } catch (Exception ignored) { }
+                try {
+                    var mNome = ing.getClass().getMethod("getNome");
+                    Object v = mNome.invoke(ing);
+                    if (v != null) return v.toString();
+                } catch (Exception ignored) { }
+            }
+        } catch (Exception ignored) { }
+
+        return "";
+    }
+
+    // Obtém a quantidade por reflexão em getters comuns
+    private static String extractIngredientQuantity(Object item) {
+        if (item == null) return "";
+
+            try {
+                var m = item.getClass().getMethod("getRequired_quantity");
+                Object v = m.invoke(item);
+                if (v != null) {
+                    String s = v.toString().trim();
+                    if (!s.isEmpty()) return s;
+                }
+            } catch (Exception ignored) { }
+
+
+        return "";
+    }
+
+
+    // Painel arredondado simples para visual moderno
+    static class RoundedPanel extends JPanel {
+        private final int arc;
+
+        public RoundedPanel(int arc) {
+            this.arc = arc;
+            setOpaque(false);
         }
 
-        public Object getCellEditorValue() {
-            action.onClick(row);
-            return button.getText();
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(getBackground());
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), arc, arc);
+            g2.dispose();
+            super.paintComponent(g);
         }
     }
 }
