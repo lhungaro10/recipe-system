@@ -77,7 +77,7 @@ public class IngredientCatalog {
         }
     }
 
-    public Boolean removeIngredient(Ingredient ingredient) {
+    public Boolean deleteIngredient(Ingredient ingredient) {
         try {
             ArrayList<Ingredient> tempList = this.ingredientPersistence.readFromFile().orElse(new ArrayList<Ingredient>());
 

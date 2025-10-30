@@ -10,7 +10,9 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class Recipe implements Serializable {
+    private static final long serialVersionUID = 1L; // \- garante compatibilidade de serialização
     private static final AtomicLong count = new AtomicLong(System.currentTimeMillis());
+
     private Long id;
     private String name;
     private Integer number_of_servings;
@@ -78,6 +80,18 @@ public class Recipe implements Serializable {
             }
         }
         return null;
+    }
+
+    public Boolean hasIngredient(Ingredient ingredient) {
+        if (ingredient == null) return false;
+
+        String name = ingredient.getName();
+        for (RecipeIngredient ri : this.recipeIngredients) {
+            if (ri != null && Objects.equals(name, ri.getIngredient_name())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void remove_ingredient_not_in(ArrayList<RecipeIngredient> ingredientsToKeep) {

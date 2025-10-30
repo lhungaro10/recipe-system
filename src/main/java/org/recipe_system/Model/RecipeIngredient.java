@@ -3,6 +3,7 @@ package org.recipe_system.Model;
 import java.io.Serializable;
 
 public class RecipeIngredient implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String ingredient_name;
     private int required_quantity;
 

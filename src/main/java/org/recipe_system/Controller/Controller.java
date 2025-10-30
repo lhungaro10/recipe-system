@@ -58,11 +58,23 @@ public class Controller {
         return this.ingredientCatalog.editIngredient(ingredient, name, qtd_in_stock);
     }
 
-    public Boolean removeIngredient(Ingredient ingredient) {
-        if(!this.ingredientCatalog.verifyIngredientExists(ingredient)){
+    public Boolean deleteIngredient(Ingredient ingredient) {
+        Boolean flag = this.any_recipe_use_ingredient(ingredient);
+        logger.debug("flag any recipe use ingredient: {}", flag);
+        if(flag){
             return false;
         }
-        return this.ingredientCatalog.removeIngredient(ingredient);
+
+        return this.ingredientCatalog.deleteIngredient(ingredient);
+    }
+
+    public Boolean any_recipe_use_ingredient(Ingredient ingredient){
+        ArrayList<Recipe> recipes = this.recipeCatalog.getAllRecipes();
+        for(Recipe recipe: recipes){
+            Boolean hasIngredient = recipe.hasIngredient(ingredient);
+            if(hasIngredient){return true;}
+        }
+        return false;
     }
 
     public ArrayList<Ingredient> getAllIngredients() {

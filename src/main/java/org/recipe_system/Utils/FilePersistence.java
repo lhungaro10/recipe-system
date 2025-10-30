@@ -1,48 +1,73 @@
+// java
 package org.recipe_system.Utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
+import java.nio.file.*;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-// aqui utilizamos o generics para se adequar a qualquer classe do sistem que implemente a interface Serializable
 public class FilePersistence<T extends Serializable> {
-    private final static File persistenceFolder = new File("data");
-    private String fileName;
+    private static final Logger logger = LoggerFactory.getLogger(FilePersistence.class);
 
-    public FilePersistence(String fileName) {
-        this.fileName = fileName;
+    private final Path path;
 
-        // cria pasta da persistencia, caso não exista
-        if(!FilePersistence.persistenceFolder.exists()){
-            FilePersistence.persistenceFolder.mkdirs();
+    // Se "file" for absoluto, usa como está; se for relativo, resolve em <user.dir>/data/<file>
+    public FilePersistence(String file) {
+        Path provided = Paths.get(file);
+        if (provided.isAbsolute()) {
+            this.path = provided.normalize();
+        } else {
+            Path base = Paths.get(System.getProperty("user.dir"), "data");
+            this.path = base.resolve(provided).toAbsolutePath().normalize();
         }
-    }
-
-    public String getFilePath() {
-        return persistenceFolder + File.separator + this.fileName;
+        logger.info("FilePersistence path resolvido: {}", this.path);
     }
 
     public Optional<ArrayList<T>> readFromFile() {
         try {
-            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(this.getFilePath()));
-            ArrayList<T> list = (ArrayList<T>) ois.readObject();
-            ois.close();
-            return Optional.of(list);
-        } catch (IOException | ClassNotFoundException e) {
+            if (!Files.exists(path)) {
+                logger.info("Arquivo inexistente: {}", path);
+                return Optional.empty();
+            }
+            try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(path))) {
+                @SuppressWarnings("unchecked")
+                ArrayList<T> data = (ArrayList<T>) in.readObject();
+                logger.info("Lido com sucesso de {} (qtd={})", path, data.size());
+                return Optional.ofNullable(data);
+            }
+        } catch (Exception e) {
+            logger.error("Erro ao ler de {}: {}", path, e.toString(), e);
             return Optional.empty();
         }
     }
 
     public void saveToFile(ArrayList<T> list) {
+        Path parent = path.getParent();
         try {
-            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(this.getFilePath()));
-            oos.writeObject(list);
-            oos.close();
-        } catch (IOException e) {
-            System.err.println("Error saving to file: " + e.getMessage());
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
+            Path tmp = path.resolveSibling(path.getFileName().toString() + ".tmp");
+            try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(tmp))) {
+                out.writeObject(list);
+                out.flush();
+            }
+            Files.move(tmp, path, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            logger.info("Salvo com sucesso em {} (qtd={})", path, list.size());
+        } catch (Exception e) {
+            logger.error("Erro ao salvar em {}: {}", path, e.toString(), e);
+            try {
+                Path tmp = path.resolveSibling(path.getFileName().toString() + ".tmp");
+                Files.deleteIfExists(tmp);
+            } catch (IOException ignore) {}
+            throw new RuntimeException("Falha ao salvar em " + path, e);
         }
     }
 
-
+    public Path getResolvedPath() {
+        return path;
+    }
 }

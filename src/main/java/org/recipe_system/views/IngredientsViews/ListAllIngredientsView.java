@@ -66,10 +66,10 @@ public class ListAllIngredientsView extends JFrame {
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.WARNING_MESSAGE);
             if (confirm == JOptionPane.YES_OPTION) {
-                Boolean success = controller.removeIngredient(ing); // Implemente este método no Controller
+                Boolean success = controller.deleteIngredient(ing); // Implemente este método no Controller
                 if (!success) {
-                    JOptionPane.showMessageDialog(this, "Erro ao remover o ingrediente: " + ing.getName(),
-                            "Erro", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Ingrediente utilizado em alguma das receitas","Erro ao remover o ingrediente: " + ing.getName(),
+                             JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 JOptionPane.showMessageDialog(this, "Removido: " + ing.getName());
