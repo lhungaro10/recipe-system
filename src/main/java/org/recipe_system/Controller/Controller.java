@@ -150,6 +150,22 @@ public class Controller {
         return this.recipeCatalog.getAllRecipes();
     }
 
+    // Era mais fácil só mostrar a receita no front
+//    public Recipe getRecipeDetails(Recipe recipe) {
+//        String recipeName = recipe.getName();
+//        Integer numberOfServings = recipe.getNumberOfServings();
+//        ArrayList<RecipeIngredient> ingredients = recipe.getIngredients();
+//        Recipe detailedRecipe = new Recipe(recipeName, numberOfServings);
+//
+//        for(RecipeIngredient recipeIngredient: ingredients){
+//            String ingredientName = recipeIngredient.getIngredient_name();
+//            Integer requiredQuantity = recipeIngredient.getRequired_quantity();
+//            detailedRecipe.(new Ingredient(ingredientName, 0), requiredQuantity);
+//        }
+//
+//
+//    }
+
     public Boolean delete_recipe(Recipe recipe){
         return this.recipeCatalog.delete_recipe(recipe);
     }

@@ -4,10 +4,8 @@ package org.recipe_system.Model;
 import java.io.Serializable;
 import java.lang.System;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
 public class Recipe implements Serializable {
     private static final long serialVersionUID = 1L; // \- garante compatibilidade de serialização
@@ -51,7 +49,7 @@ public class Recipe implements Serializable {
         this.name = name;
     }
 
-    public Integer getServings() {
+    public Integer getNumberOfServings() {
         return number_of_servings;
     }
 

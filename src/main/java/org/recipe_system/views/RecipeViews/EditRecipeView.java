@@ -61,7 +61,7 @@ public class EditRecipeView extends JDialog {
         });
 
         JLabel servingsLabel = new JLabel("Número de Refeições:");
-        servingsField = new JTextField(String.valueOf(recipeToEdit.getServings())); // Preenche as porções
+        servingsField = new JTextField(String.valueOf(recipeToEdit.getNumberOfServings())); // Preenche as porções
         styleTextField(servingsField);
 
         formPanel.add(nameLabel);
