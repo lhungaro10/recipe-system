@@ -1,6 +1,10 @@
 package org.recipe_system.Model;
 
-public class RecipeQuery {
+import org.recipe_system.Catalog.RecipeQueryCatalog;
+
+import java.io.Serializable;
+
+public class RecipeQuery implements Serializable {
     private int target_number_of_servings;
     private boolean made;
 
@@ -13,12 +17,17 @@ public class RecipeQuery {
     }
 
     public boolean consume_ingredients() {
+        RecipeQueryCatalog recipeQueryCatalog = new RecipeQueryCatalog();
+        Boolean success = recipeQueryCatalog.consumeIngredients(this);
 
         return false;
     }
 
-    public boolean hasRequiredIngredients() {
-        return false;
+    public Boolean hasRequiredIngredients() {
+        RecipeQueryCatalog recipeQueryCatalog = new RecipeQueryCatalog();
+
+        return recipeQueryCatalog.hasRequiredIngredients(this);
+
     }
 
 
@@ -32,5 +41,13 @@ public class RecipeQuery {
 
     public Recipe getRecipe() {
         return recipe;
+    }
+
+    public void setTarget_number_of_servings(int target_number_of_servings) {
+        this.target_number_of_servings = target_number_of_servings;
+    }
+
+    public void setMade(boolean made) {
+        this.made = made;
     }
 }

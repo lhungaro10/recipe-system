@@ -3,6 +3,7 @@ package org.recipe_system.views;
 import org.recipe_system.Controller.Controller;
 import org.recipe_system.views.IngredientsViews.AddIngredientView;
 import org.recipe_system.views.IngredientsViews.ListAllIngredientsView;
+import org.recipe_system.views.QueryRecipeView.ListRecipeQueriesView;
 import org.recipe_system.views.RecipeViews.AddRecipeView;
 import org.recipe_system.views.RecipeViews.ListRecipesView;
 
@@ -92,10 +93,12 @@ public class Home extends JFrame {
 
         // --- Menu "Ações" ---
         JMenu actionsMenu = new JMenu("Ações");
-        JMenuItem planRecipeItem = new JMenuItem("Planejar Receita...");
+        JMenuItem planRecipeItem = new JMenuItem("Planejamento de receitas");
 
-        planRecipeItem.addActionListener(e ->
-                JOptionPane.showMessageDialog(this, "Funcionalidade 'Planejar Receita' a ser implementada!")
+        planRecipeItem.addActionListener(e -> {
+                ListRecipeQueriesView listQueriesView = new ListRecipeQueriesView(controller);
+                listQueriesView.setVisible(true);
+            }
         );
 
         actionsMenu.add(planRecipeItem);

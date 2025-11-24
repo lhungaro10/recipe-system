@@ -7,6 +7,7 @@ import org.recipe_system.Controller.Controller;
 import org.recipe_system.Model.Recipe;
 import org.recipe_system.Model.RecipeIngredient;
 import org.recipe_system.Utils.StringHandler;
+import org.recipe_system.views.QueryRecipeView.CreateRecipeQueryView;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -16,8 +17,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class ListRecipesView extends JFrame {
-
+    private Controller controller;
     public ListRecipesView(Controller controller) {
+        this.controller = controller;
         setTitle("Lista de Receitas");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout(10, 10));
@@ -166,7 +168,7 @@ public class ListRecipesView extends JFrame {
         setLocationRelativeTo(null);
     }
 
-    public static void showRecipeDetails(Recipe recipe) {
+    public void showRecipeDetails(Recipe recipe) {
         if (recipe == null) return;
 
         String recipeName = recipe.getName();
@@ -235,6 +237,12 @@ public class ListRecipesView extends JFrame {
         JButton closeButton = createActionButton("Fechar", new Color(240, 240, 240), Color.BLACK);
         closeButton.addActionListener(e -> dialog.dispose());
 
+
+        JButton makeButton = createActionButton("Fazer receita", new Color(40, 167, 69), Color.WHITE);
+        makeButton.addActionListener(e -> {
+            this.renderMakeRecipeButton(recipe, dialog);
+        });
+        actions.add(makeButton);
         actions.add(closeButton);
 
         card.add(header, BorderLayout.NORTH);
@@ -277,6 +285,12 @@ public class ListRecipesView extends JFrame {
         ingredientsArea.setForeground(new Color(108, 117, 125));
         ingredientsArea.setText(ingredientsText);
         return ingredientsArea;
+    }
+
+    private void renderMakeRecipeButton(Recipe recipe, JDialog dialog){
+        CreateRecipeQueryView queryView = new CreateRecipeQueryView(controller, recipe);
+        queryView.setVisible(true);
+        dialog.dispose();
     }
 
     private static JButton createActionButton(String text, Color bg, Color fg) {
@@ -394,7 +408,7 @@ public class ListRecipesView extends JFrame {
     }
 
     // Painel arredondado simples para visual moderno
-    static class RoundedPanel extends JPanel {
+    public static class RoundedPanel extends JPanel {
         private final int arc;
 
         public RoundedPanel(int arc) {

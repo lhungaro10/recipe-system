@@ -2,15 +2,16 @@ package org.recipe_system.Controller;
 
 import org.recipe_system.Catalog.IngredientCatalog;
 import org.recipe_system.Catalog.RecipeCatalog;
-import org.recipe_system.Model.Ingredient;
-import org.recipe_system.Model.Recipe;
-import org.recipe_system.Model.RecipeIngredient;
-import org.recipe_system.Model.User;
+import org.recipe_system.Catalog.RecipeQueryCatalog;
+import org.recipe_system.Model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.System;
 import java.util.ArrayList;
 import java.util.List;
+
+
 
 public class Controller {
     private static final Logger logger = LoggerFactory.getLogger(Controller.class);
@@ -19,10 +20,12 @@ public class Controller {
 
     IngredientCatalog ingredientCatalog;
     RecipeCatalog recipeCatalog;
+    RecipeQueryCatalog recipeQueryCatalog;
 
     public Controller() {
         this.ingredientCatalog = new IngredientCatalog();
         this.recipeCatalog = new RecipeCatalog();
+        this.recipeQueryCatalog = new RecipeQueryCatalog();
     }
 
     public void setCurrentUser(User user) {
@@ -150,24 +153,34 @@ public class Controller {
         return this.recipeCatalog.getAllRecipes();
     }
 
-    // Era mais fácil só mostrar a receita no front
-//    public Recipe getRecipeDetails(Recipe recipe) {
-//        String recipeName = recipe.getName();
-//        Integer numberOfServings = recipe.getNumberOfServings();
-//        ArrayList<RecipeIngredient> ingredients = recipe.getIngredients();
-//        Recipe detailedRecipe = new Recipe(recipeName, numberOfServings);
-//
-//        for(RecipeIngredient recipeIngredient: ingredients){
-//            String ingredientName = recipeIngredient.getIngredient_name();
-//            Integer requiredQuantity = recipeIngredient.getRequired_quantity();
-//            detailedRecipe.(new Ingredient(ingredientName, 0), requiredQuantity);
-//        }
-//
-//
-//    }
 
     public Boolean delete_recipe(Recipe recipe){
         return this.recipeCatalog.delete_recipe(recipe);
+    }
+
+    public Boolean consultRecipe(Recipe recipe, Integer target, QueryListeners listener){
+        RecipeQuery query = new RecipeQuery(recipe, target);
+
+        Boolean canMake = query.hasRequiredIngredients();
+
+        if (canMake) {
+            Boolean confirm = listener.onConfirmQuery();
+            if (confirm) {
+                query.setMade(true);
+                query.consume_ingredients();
+                this.recipeQueryCatalog.insertRecipeQuery(query);
+                return Boolean.TRUE;
+            }
+        } else {
+            query.setMade(false);
+            this.recipeQueryCatalog.insertRecipeQuery(query);
+            listener.onInsufficientIngredients();
+        }
+        return Boolean.FALSE;
+    }
+
+    public ArrayList<RecipeQuery> getAllRecipeQueries(){
+        return this.recipeQueryCatalog.getAllRecipeQueries();
     }
 
     private Boolean validateCounts(ArrayList<Ingredient> ingredients, ArrayList<Integer> qtds) {

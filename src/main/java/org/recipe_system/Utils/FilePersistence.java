@@ -46,15 +46,20 @@ public class FilePersistence<T extends Serializable> {
 
     public void saveToFile(ArrayList<T> list) {
         Path parent = path.getParent();
+        logger.debug("pegou pasta pai");
         try {
             if (parent != null) {
                 Files.createDirectories(parent);
+                logger.debug("criou pasta pai");
             }
             Path tmp = path.resolveSibling(path.getFileName().toString() + ".tmp");
+            logger.debug("lista que esta sendo gravada tem tamanho {}", list.toString());
             try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(tmp))) {
+
                 out.writeObject(list);
                 out.flush();
             }
+            logger.debug("finalizou escrever objeto");
             Files.move(tmp, path, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
             logger.info("Salvo com sucesso em {} (qtd={})", path, list.size());
         } catch (Exception e) {
