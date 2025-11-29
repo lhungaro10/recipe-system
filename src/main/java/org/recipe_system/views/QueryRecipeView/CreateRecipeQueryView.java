@@ -1,4 +1,4 @@
-// java
+
 package org.recipe_system.views.QueryRecipeView;
 
 import org.recipe_system.Controller.Controller;
@@ -11,7 +11,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class CreateRecipeQueryView extends JFrame{
+public class CreateRecipeQueryView extends JPanel{
 
     /**
      * Mostra um diálogo que exibe o nome da receita e um input para
